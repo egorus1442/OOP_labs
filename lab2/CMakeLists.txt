@@ -1,14 +1,39 @@
-cmake_minimum_required(VERSION 3.10)
-project(Lab2)
+cmake_minimum_required(VERSION 3.14)
+project(thirteen_project)
 
-set(CMAKE_CXX_STANDARD 11)
+# Установка стандарта C++
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Указываем путь к Google Test
-set(GTEST_ROOT "/usr/local/Cellar/googletest/1.15.2")
-include_directories(${GTEST_ROOT}/include)
+# Добавление основной библиотеки
+add_library(thirteen_lib
+    src/thirteen.cpp
+)
 
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+target_include_directories(thirteen_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-add_executable(test_lab2 tests/test_lab2.cpp)
-target_link_libraries(test_lab2 ${GTEST_LIBRARIES} pthread)
+# Настройка Google Test
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+)
+FetchContent_MakeAvailable(googletest)
+
+# Добавление тестов
+enable_testing()
+add_executable(thirteen_tests
+    tests/thirteen_tests.cpp
+)
+
+target_link_libraries(thirteen_tests
+    thirteen_lib
+    gtest
+    gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(thirteen_tests) 

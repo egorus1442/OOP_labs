@@ -1,47 +1,50 @@
-#include <iostream>
-#include <vector>
-#include <stdexcept>
-#include <initializer_list>
-#include <string>
+// Защита от повторного включения заголовочного файла
+#ifndef THIRTEEN_H
+#define THIRTEEN_H
+
+// Подключение необходимых стандартных библиотек
+#include <initializer_list>  // для работы со списком инициализации
+#include <string>            // для работы со строками
 
 class Thirteen {
+private:
+    // Приватные поля класса
+    unsigned char* digits;  // динамический массив для хранения цифр числа
+    size_t size;           // размер числа (количество цифр)
+
 public:
-    // Конструкторы
-    Thirteen();  // Конструктор по умолчанию
-    Thirteen(const std::initializer_list<unsigned char>& digits);  // Конструктор от списка инициализации
-    Thirteen(const std::string& str);  // Конструктор от строки
-    Thirteen(const Thirteen& other);  // Конструктор копирования
-    Thirteen(Thirteen&& other) noexcept;  // Конструктор перемещения
+    // Конструкторы:
+    Thirteen();  // создает число "0"
+    Thirteen(const size_t& n, unsigned char t = 0);  // создает n-значное число из цифры t
+    Thirteen(const std::initializer_list<unsigned char>& t);  // создает число из списка цифр
+    Thirteen(const std::string& t);  // создает число из строкового представления
+    Thirteen(const Thirteen& other);  // создает копию существующего числа
+    Thirteen(Thirteen&& other) noexcept;  // перемещает существующее число
+    
+    // Деструктор для освобождения памяти
+    virtual ~Thirteen() noexcept;
 
-    // Деструктор
-    ~Thirteen() noexcept;
-
-    // Операции присваивания
-    Thirteen& operator=(const Thirteen& other);  // Присваивание копированием
-    Thirteen& operator=(Thirteen&& other) noexcept;  // Присваивание перемещением
+    // Операторы присваивания
+    Thirteen& operator=(const Thirteen& other);  // копирующее присваивание
+    Thirteen& operator=(Thirteen&& other) noexcept;  // перемещающее присваивание
 
     // Арифметические операции
-    Thirteen operator+(const Thirteen& other) const;  // Сложение
-    Thirteen operator-(const Thirteen& other) const;  // Вычитание
-
-    // Арифметические операции с присваиванием
-    Thirteen& operator+=(const Thirteen& other);  // Сложение с присваиванием
-    Thirteen& operator-=(const Thirteen& other);  // Вычитание с присваиванием
-
+    Thirteen operator+(const Thirteen& other) const;  // сложение двух чисел
+    Thirteen operator-(const Thirteen& other) const;  // вычитание двух чисел
+    
     // Операции сравнения
-    bool operator==(const Thirteen& other) const;  // Равно
-    bool operator!=(const Thirteen& other) const;  // Не равно
-    bool operator<(const Thirteen& other) const;   // Меньше
-    bool operator>(const Thirteen& other) const;   // Больше
-    bool operator<=(const Thirteen& other) const;  // Меньше или равно
-    bool operator>=(const Thirteen& other) const;  // Больше или равно
+    bool operator<(const Thirteen& other) const;   // меньше
+    bool operator>(const Thirteen& other) const;   // больше
+    bool operator==(const Thirteen& other) const;  // равно
 
-    // Вспомогательные методы
-    std::string toString() const;
+    // Методы для арифметических операций с присваиванием
+    Thirteen& add(const Thirteen& other);      // прибавить к текущему числу
+    Thirteen& subtract(const Thirteen& other); // вычесть из текущего числа
 
 private:
-    std::vector<unsigned char> digits;  // Вектор для хранения тринадцатиричных цифр
-
-    // Вспомогательные функции для работы с арифметикой
-    void trim();  // Удаляет ведущие нули
+    // Вспомогательные методы
+    void validate_digit(unsigned char digit) const;  // проверяет, что цифра < 13
+    void normalize();  // удаляет ведущие нули
 };
+
+#endif
